@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema Inteligente de Recomendaciones Musicales</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-soft: #111827;
+      --card: #1e293b;
+      --text: #e5e7eb;
+      --muted: #cbd5e1;
+      --accent: #8b5cf6;
+      --accent-2: #22c55e;
+      --line: rgba(255,255,255,0.08);
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, var(--bg) 0%, #111827 45%, #0b1220 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      font-weight: bold;
+      font-size: 1rem;
+      color: var(--white);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .hero {
+      padding: 72px 0 50px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(139, 92, 246, 0.15);
+      color: #ddd6fe;
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.2;
+      margin-top: 0;
+      color: var(--white);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      margin-bottom: 14px;
+    }
+
+    p { color: var(--muted); }
+
+    .hero-card,
+    .card,
+    .demo-box,
+    .table-wrap,
+    .flow,
+    .ref-box {
+      background: rgba(30, 41, 59, 0.72);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    }
+
+    .hero-card {
+      padding: 24px;
+    }
+
+    .hero-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .hero-list div {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--text);
+    }
+
+    section {
+      padding: 28px 0 18px;
+    }
+
+    .section-head {
+      max-width: 820px;
+      margin-bottom: 24px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      padding: 20px;
+    }
+
+    .card span {
+      display: inline-block;
+      font-size: 0.85rem;
+      color: #ddd6fe;
+      margin-bottom: 10px;
+    }
+
+    .demo-box {
+      padding: 24px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    select, button {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 12px 14px;
+      font-size: 0.98rem;
+    }
+
+    select {
+      background: rgba(255,255,255,0.05);
+      color: var(--white);
+      outline: none;
+    }
+
+    select option {
+      color: #111827;
+    }
+
+    button {
+      background: linear-gradient(90deg, var(--accent), #7c3aed);
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .results {
+      margin-top: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .result-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .result-item h4 {
+      margin: 0 0 8px;
+      color: var(--white);
+      font-size: 1.05rem;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.14);
+      color: #bbf7d0;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      padding: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th, td {
+      padding: 14px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      color: var(--muted);
+    }
+
+    th { color: var(--white); }
+
+    .flow {
+      padding: 24px;
+    }
+
+    .flow-wrap {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .flow-step {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px 18px;
+      min-width: 150px;
+      text-align: center;
+      color: var(--white);
+      flex: 1 1 150px;
+    }
+
+    .arrow {
+      color: #a78bfa;
+      font-size: 1.4rem;
+      font-weight: bold;
+    }
+
+    .ref-box {
+      padding: 22px;
+    }
+
+    .ref-box ol {
+      padding-left: 22px;
+      margin: 0;
+    }
+
+    .ref-box li {
+      margin-bottom: 14px;
+      color: var(--muted);
+    }
+
+    footer {
+      padding: 32px 0 48px;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .grid-2,
+      .grid-4,
+      form {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand">Recomendaciones Musicales IA</div>
+      <div class="nav-links">
+        <a href="#acerca">Acerca del proyecto</a>
+        <a href="#funcionamiento">Funcionamiento</a>
+        <a href="#demo">Demo</a>
+        <a href="#practica">Parte práctica</a>
+        <a href="#referencias">Referencias</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="badge">Proyecto universitario de Inteligencia Artificial</div>
+        <h1>Sistema inteligente de recomendaciones musicales basado en preferencias del usuario</h1>
+        <p>
+          Este sitio presenta un prototipo web que recomienda canciones, artistas o playlists a partir del género,
+          idioma, estado de ánimo y contexto de uso elegido por el usuario. El objetivo es demostrar cómo la
+          inteligencia artificial puede aplicarse a una experiencia digital cotidiana de forma simple, útil y personalizada.
+        </p>
+      </div>
+      <div class="hero-card">
+        <h3>¿Qué hace el sistema?</h3>
+        <div class="hero-list">
+          <div>Analiza preferencias musicales ingresadas por el usuario.</div>
+          <div>Relaciona esas preferencias con una base de datos musical de prueba.</div>
+          <div>Genera recomendaciones simuladas con una explicación breve.</div>
+          <div>Permite visualizar una posible evolución hacia un sistema más inteligente.</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="acerca">
+      <div class="container">
+        <div class="section-head">
+          <h2>Acerca del proyecto</h2>
+          <p>
+            El problema que busca resolver este proyecto es la dificultad que tienen muchos usuarios para encontrar música
+            adecuada dentro de catálogos muy amplios. En plataformas digitales existen miles de canciones, artistas y listas de
+            reproducción, por lo que elegir contenido acorde con los gustos personales puede resultar tardado o confuso. Ante
+            esa situación, el sistema propuesto plantea una solución basada en personalización, donde el usuario ingresa ciertas
+            características y el sistema devuelve sugerencias ajustadas a su perfil.
+          </p>
+          <p>
+            La inteligencia artificial se utiliza en este proyecto como una lógica de análisis y decisión. Aunque el prototipo
+            mostrado aquí trabaja con reglas y coincidencias entre variables, su enfoque responde al mismo principio de los
+            sistemas inteligentes: interpretar datos del usuario, encontrar patrones de preferencia y generar respuestas de manera
+            automatizada. De esta forma, el proyecto representa una aplicación realista de la IA en un entorno musical y web.
+          </p>
+        </div>
+        <div class="grid-2">
+          <article class="card">
+            <span>Problema</span>
+            <h3>Sobrecarga de opciones musicales</h3>
+            <p>
+              El usuario puede sentirse perdido entre muchas opciones disponibles y necesita un sistema que filtre el contenido
+              para encontrar música más relacionada con sus gustos y necesidades del momento.
+            </p>
+          </article>
+          <article class="card">
+            <span>Solución</span>
+            <h3>Recomendación personalizada</h3>
+            <p>
+              El sistema analiza variables como género, idioma, estado de ánimo y contexto de uso para sugerir canciones o
+              playlists coherentes con la información proporcionada.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="funcionamiento">
+      <div class="container">
+        <div class="section-head">
+          <h2>Funcionamiento</h2>
+          <p>
+            El sistema recibe preferencias del usuario y las compara con una colección de opciones musicales clasificadas. A
+            partir de esa relación, prioriza los resultados que mejor coinciden con el perfil ingresado. En esta versión demo se
+            toman en cuenta cuatro variables principales.
+          </p>
+        </div>
+        <div class="grid-4">
+          <article class="card">
+            <span>Variable 1</span>
+            <h3>Género</h3>
+            <p>Permite seleccionar el estilo musical preferido, por ejemplo pop, indie, rock, lo-fi o reggaetón.</p>
+          </article>
+          <article class="card">
+            <span>Variable 2</span>
+            <h3>Idioma</h3>
+            <p>Ayuda a filtrar recomendaciones entre música en español, inglés o mezclas según el gusto del usuario.</p>
+          </article>
+          <article class="card">
+            <span>Variable 3</span>
+            <h3>Estado de ánimo</h3>
+            <p>El sistema considera si la persona busca algo relajado, alegre, concentrado o con más energía.</p>
+          </article>
+          <article class="card">
+            <span>Variable 4</span>
+            <h3>Contexto de uso</h3>
+            <p>La recomendación cambia según la actividad actual, como estudiar, entrenar, descansar o conducir.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo">
+      <div class="container">
+        <div class="section-head">
+          <h2>Demo del sistema</h2>
+          <p>
+            En esta simulación, el usuario elige sus preferencias y el sistema muestra recomendaciones de ejemplo con una breve
+            justificación. La lógica es una representación sencilla de cómo funcionaría el prototipo real.
+          </p>
+        </div>
+        <div class="demo-box">
+          <form id="musicForm">
+            <div>
+              <label for="genre">Género musical</label>
+              <select id="genre" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Pop">Pop</option>
+                <option value="Indie">Indie</option>
+                <option value="Rock">Rock</option>
+                <option value="Lo-fi">Lo-fi</option>
+                <option value="Reggaetón">Reggaetón</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="language">Idioma</label>
+              <select id="language" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Español">Español</option>
+                <option value="Inglés">Inglés</option>
+                <option value="Mixto">Mixto</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="mood">Estado de ánimo</label>
+              <select id="mood" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Relajado">Relajado</option>
+                <option value="Alegre">Alegre</option>
+                <option value="Concentrado">Concentrado</option>
+                <option value="Energético">Energético</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="context">Contexto de uso</label>
+              <select id="context" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Estudiar">Estudiar</option>
+                <option value="Trabajar">Trabajar</option>
+                <option value="Descansar">Descansar</option>
+                <option value="Entrenar">Entrenar</option>
+                <option value="Conducir">Conducir</option>
+              </select>
+            </div>
+
+            <div class="full">
+              <button type="submit">Generar recomendaciones</button>
+            </div>
+          </form>
+
+          <div class="results" id="results"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="practica">
+      <div class="container">
+        <div class="section-head">
+          <h2>Parte práctica</h2>
+          <p>
+            La parte práctica del proyecto se enfoca en el desarrollo de un prototipo web. No se trata de un dispositivo físico,
+            sino de una solución digital que usa herramientas de programación, diseño web y almacenamiento de datos para simular
+            el comportamiento de un recomendador musical inteligente.
+          </p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Herramienta o recurso</th>
+                <th>Uso dentro del proyecto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>HTML, CSS y JavaScript</td>
+                <td>Diseño de la interfaz y funcionamiento inicial del prototipo web.</td>
+              </tr>
+              <tr>
+                <td>Python y Flask</td>
+                <td>Posible implementación de la lógica del sistema y conexión con la base de datos.</td>
+              </tr>
+              <tr>
+                <td>SQLite o MySQL</td>
+                <td>Almacenamiento de canciones, artistas, géneros, idioma y contexto musical.</td>
+              </tr>
+              <tr>
+                <td>Visual Studio Code</td>
+                <td>Edición y organización del código del proyecto.</td>
+              </tr>
+              <tr>
+                <td>GitHub Pages</td>
+                <td>Publicación gratuita de la versión de demostración del sitio web.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="height:20px"></div>
+
+        <div class="flow">
+          <h3>Arquitectura y flujo del sistema</h3>
+          <div class="flow-wrap">
+            <div class="flow-step">Usuario</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">Formulario de preferencias</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">Motor de recomendación</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">Base de datos musical</div>
+            <div class="arrow">→</div>
+            <div class="flow-step">Resultados personalizados</div>
+          </div>
+          <p style="margin-top:18px;">
+            El flujo inicia cuando el usuario selecciona sus preferencias. Luego, el motor de recomendación compara esas opciones
+            con la información registrada en la base de datos y devuelve sugerencias musicales. En una versión futura, el sistema
+            podría aprender del historial de uso y mejorar progresivamente la precisión de las recomendaciones.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="referencias">
+      <div class="container">
+        <div class="section-head">
+          <h2>Referencias</h2>
+          <p>
+            Estas fuentes en formato APA respaldan la base teórica del proyecto y se relacionan directamente con los sistemas de
+            recomendación musical, la explicabilidad y el análisis de preferencias del usuario.
+          </p>
+        </div>
+        <div class="ref-box">
+          <ol>
+            <li>Abbattista, D., Anelli, V. W., Di Noia, T., Macdonald, C., &amp; Petrov, A. V. (2024). <em>Enhancing sequential music recommendation with personalized popularity awareness</em>. arXiv.</li>
+            <li>Afchar, D., Melchiorre, A. B., Schedl, M., Hennequin, R., Epure, E. V., &amp; Moussallam, M. (2022). <em>Explainability in music recommender systems</em>. Applied Artificial Intelligence, 36(1).</li>
+            <li>Deldjoo, Y., Elahi, M., Song, H., et al. (2024). <em>Content-driven music recommendation: Evolution, state of the art, and challenges</em>. Computer Science Review, 51, 100618.</li>
+            <li>Kostrzewa, D., et al. (2024). <em>Attributes relevance in content-based music recommendation system</em>. Applied Sciences, 14(2), 855.</li>
+            <li>Zeng, Z., Wang, J., et al. (2024). <em>A survey of music recommendation systems</em>. Proceedings of the ACM International Conference Series.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Proyecto académico de Inteligencia Artificial · Sistema inteligente de recomendaciones musicales
+  </footer>
+
+  <script>
+    const songs = [
+      {
+        title: 'Playlist: Indie Study Session',
+        artist: 'Varios artistas',
+        genre: 'Indie',
+        language: 'Inglés',
+        mood: 'Concentrado',
+        context: 'Estudiar',
+        reason: 'Se ajusta a una sesión de estudio con un sonido suave, constante y poco invasivo.'
+      },
+      {
+        title: 'Playlist: Lo-fi Focus Beats',
+        artist: 'Varios artistas',
+        genre: 'Lo-fi',
+        language: 'Mixto',
+        mood: 'Relajado',
+        context: 'Trabajar',
+        reason: 'Ayuda a mantener un ambiente tranquilo y estable para trabajar con menos distracciones.'
+      },
+      {
+        title: 'Canción recomendada: Pyramids',
+        artist: 'Frank Ocean',
+        genre: 'Indie',
+        language: 'Inglés',
+        mood: 'Relajado',
+        context: 'Descansar',
+        reason: 'Tiene una atmósfera envolvente que encaja con un momento de descanso o desconexión.'
+      },
+      {
+        title: 'Canción recomendada: The Less I Know The Better',
+        artist: 'Tame Impala',
+        genre: 'Indie',
+        language: 'Inglés',
+        mood: 'Alegre',
+        context: 'Conducir',
+        reason: 'Su ritmo y estilo la vuelven una buena opción para trayectos ligeros y agradables.'
+      },
+      {
+        title: 'Playlist: Latin Energy Mix',
+        artist: 'Varios artistas',
+        genre: 'Reggaetón',
+        language: 'Español',
+        mood: 'Energético',
+        context: 'Entrenar',
+        reason: 'Prioriza canciones con ritmo fuerte y energía alta para acompañar actividad física.'
+      },
+      {
+        title: 'Canción recomendada: Ojitos Lindos',
+        artist: 'Bad Bunny',
+        genre: 'Reggaetón',
+        language: 'Español',
+        mood: 'Relajado',
+        context: 'Descansar',
+        reason: 'Combina un sonido accesible y tranquilo ideal para un momento más relajado.'
+      },
+      {
+        title: 'Playlist: Pop Motivation',
+        artist: 'Varios artistas',
+        genre: 'Pop',
+        language: 'Inglés',
+        mood: 'Alegre',
+        context: 'Trabajar',
+        reason: 'Su selección mantiene un ambiente animado sin perder una sensación de productividad.'
+      },
+      {
+        title: 'Canción recomendada: Stressed Out',
+        artist: 'Twenty One Pilots',
+        genre: 'Rock',
+        language: 'Inglés',
+        mood: 'Concentrado',
+        context: 'Conducir',
+        reason: 'Su estilo mezcla energía y familiaridad, ideal para trayectos o momentos de enfoque ligero.'
+      },
+      {
+        title: 'Playlist: Soft Spanish Pop',
+        artist: 'Varios artistas',
+        genre: 'Pop',
+        language: 'Español',
+        mood: 'Relajado',
+        context: 'Descansar',
+        reason: 'Ofrece canciones suaves en español para escuchar con calma.'
+      },
+      {
+        title: 'Canción recomendada: Come Back to Earth',
+        artist: 'Mac Miller',
+        genre: 'Lo-fi',
+        language: 'Inglés',
+        mood: 'Relajado',
+        context: 'Descansar',
+        reason: 'Su tono introspectivo y tranquilo encaja bien con un momento de descanso.'
+      }
+    ];
+
+    document.getElementById('musicForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const genre = document.getElementById('genre').value;
+      const language = document.getElementById('language').value;
+      const mood = document.getElementById('mood').value;
+      const context = document.getElementById('context').value;
+      const results = document.getElementById('results');
+
+      let ranked = songs
+        .map(song => {
+          let score = 0;
+          if (song.genre === genre) score += 3;
+          if (song.language === language || language === 'Mixto' || song.language === 'Mixto') score += 2;
+          if (song.mood === mood) score += 2;
+          if (song.context === context) score += 3;
+          return { ...song, score };
+        })
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3);
+
+      results.innerHTML = '';
+
+      ranked.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        div.innerHTML = `
+          <div class="pill">Coincidencia estimada: ${item.score}/10</div>
+          <h4>${item.title}</h4>
+          <p><strong>Artista:</strong> ${item.artist}</p>
+          <p><strong>Motivo de la recomendación:</strong> ${item.reason}</p>
+          <p><strong>Explicación:</strong> Se recomienda porque seleccionaste <strong>${genre}</strong>, idioma <strong>${language}</strong>, estado de ánimo <strong>${mood}</strong> y contexto <strong>${context}</strong>.</p>
+        `;
+        results.appendChild(div);
+      });
+    });
+  </script>
+</body>
+</html>
